@@ -301,14 +301,16 @@ async def sharerpw_bypass(url: str) -> str:
     token = findall("_token\s=\s'(.*?)'", res.text, DOTALL)[0]
     data = {'_token': token, 'nl': 1}
     try:
-        response = client.post(url + '/dl', headers={'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                                                     'x-requested-with': 'XMLHttpRequest'}, data=data).json()
-        return response
+        return client.post(
+            f'{url}/dl',
+            headers={
+                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'x-requested-with': 'XMLHttpRequest',
+            },
+            data=data,
+        ).json()
     except:
-        if response["message"] == "OK":
-            return ""
-        else:
-            return response["message"]
+        return "" if response["message"] == "OK" else response["message"]
 
 
 async def account_login(client, url: str):
@@ -332,8 +334,7 @@ async def appdrive_lookalike(client, drive_link: str):
     try:
         response = client.get(drive_link).text
         soup = BeautifulSoup(response, "html.parser")
-        new_drive_link = soup.find(class_="btn").get("href")
-        return new_drive_link
+        return soup.find(class_="btn").get("href")
     except:
         return drive_link
 
@@ -365,11 +366,10 @@ async def gdtot_bypass(url: str) -> str:
     params = parse_qs(urlparse(url).query)
     if "gd" not in params or not params["gd"] or params["gd"][0] == "false":
         return ""
-    else:
-        try:
-            decoded_id = b64decode(str(params["gd"][0])).decode("utf-8")
-        except:
-            return ""
+    try:
+        decoded_id = b64decode(str(params["gd"][0])).decode("utf-8")
+    except:
+        return ""
     return f"https://drive.google.com/open?id={decoded_id}"
 
 
@@ -433,8 +433,7 @@ async def jiodrive_bypass(url: str) -> str:
     except:
         return ""
 
-    drive_link = f"https://drive.google.com/open?id={gd_id}"
-    return drive_link
+    return f"https://drive.google.com/open?id={gd_id}"
 
 
 async def kolop_bypass(url: str) -> str:
@@ -450,8 +449,7 @@ async def kolop_bypass(url: str) -> str:
         gd_id = findall('gd=(.*)', res, DOTALL)[0]
     except:
         return ""
-    drive_link = f"https://drive.google.com/open?id={gd_id}"
-    return drive_link
+    return f"https://drive.google.com/open?id={gd_id}"
 
 
 async def katdrive_bypass(url: str) -> str:
@@ -468,8 +466,7 @@ async def katdrive_bypass(url: str) -> str:
     except:
         return ""
 
-    drive_link = f"https://drive.google.com/open?id={gd_id}"
-    return drive_link
+    return f"https://drive.google.com/open?id={gd_id}"
 
 
 async def gadrive_bypass(url: str) -> str:
@@ -485,8 +482,7 @@ async def gadrive_bypass(url: str) -> str:
         gd_id = findall('gd=(.*)', res, DOTALL)[0]
     except:
         return ""
-    drive_link = f"https://drive.google.com/open?id={gd_id}"
-    return drive_link
+    return f"https://drive.google.com/open?id={gd_id}"
 
 
 async def drivefire_bypass(url: str) -> str:
@@ -503,8 +499,7 @@ async def drivefire_bypass(url: str) -> str:
     except:
         return ""
 
-    drive_link = f"https://drive.google.com/open?id={gd_id}"
-    return drive_link
+    return f"https://drive.google.com/open?id={gd_id}"
 
 
 async def drivebuzz_bypass(url: str) -> str:
@@ -521,8 +516,7 @@ async def drivebuzz_bypass(url: str) -> str:
     except:
         return ""
 
-    drive_link = f"https://drive.google.com/open?id={gd_id}"
-    return drive_link
+    return f"https://drive.google.com/open?id={gd_id}"
 
 
 async def anonfiles_bypass(anonfiles_url: str) -> str:
@@ -1186,9 +1180,7 @@ async def ouo_bypass(url: str):
             timeout=5,
         )
         next_url = f"{p.scheme}://{p.hostname}/xreallcygo/{idd}"
-    if res.headers.get("Location"):
-        return str(res.headers.get("Location"))
-    return ""
+    return str(res.headers.get("Location")) if res.headers.get("Location") else ""
 
 
 async def shortest_bypass(url: str) -> str:
@@ -1558,11 +1550,9 @@ async def pkin_bypass(url: str) -> str:
     data = {inp.get("name"): inp.get("value") for inp in inputs}
     await sleep(3)
     headers = {"x-requested-with": "XMLHttpRequest", "user-agent": user_agent}
-    bypassed_url = client.post(domain + "links/go",
-                               data=data,
-                               headers=headers,
-                               timeout=5).json()["url"]
-    return bypassed_url
+    return client.post(
+        f"{domain}links/go", data=data, headers=headers, timeout=5
+    ).json()["url"]
 
 
 async def bypass(url: str, name: str = ""):
